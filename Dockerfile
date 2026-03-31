@@ -1,60 +1,35 @@
-###########
-# BUILDER #
-###########
+# Stage 1: Build and Test
+FROM python:3.9-slim AS builder
 
-# pull official base image
-FROM python:3.10.14-slim as builder
+WORKDIR /app
 
-# set work directory
-WORKDIR /usr
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Ensure path is set for tests to find installed packages
+ENV PATH=/root/.local/bin:$PATH
 
-# install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc
+# Copy source code and tests
+COPY src ./src
+COPY resource ./resource
+COPY test ./test
 
-RUN pip install --upgrade pip
+# Run tests
+RUN python -m unittest discover -s test
 
-# install dependencies
-COPY ./requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/wheels -r requirements.txt
+# Stage 2: Runtime
+FROM python:3.9-slim
 
-#########
-# FINAL #
-#########
+WORKDIR /app
 
-# pull official base image
-FROM python:3.10.14-slim
+# Copy installed packages from builder stage
+COPY --from=builder /root/.local /root/.local
+ENV PATH=/root/.local/bin:$PATH
 
-# create the app user
-# RUN addgroup --system app && adduser --system --group app
+# Copy application source code
+COPY src ./src
+COPY main.py .
+COPY .env .
 
-# create the appropriate directories
-ENV APP_HOME=/home/app
-RUN mkdir -p $APP_HOME
-COPY ./entrypoint.sh / $APP_HOME
-COPY ./cmd / $APP_HOME
-COPY ./pytest.ini $APP_HOME
-COPY ./src $APP_HOME/src
-RUN chmod -R 777 $APP_HOME
-
-# install dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends netcat-openbsd
-COPY --from=builder /usr/wheels /wheels
-COPY --from=builder /usr/requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install --no-cache /wheels/*
-
-# chown all the files to the app user
-# RUN chown -R app:app $APP_HOME
-
-# change to the app user
-# USER app
-
-WORKDIR $APP_HOME
-
-# run entrypoint.prod.sh
-ENTRYPOINT ["/home/app/entrypoint.sh"]
+# Set the entrypoint
+CMD ["python", "main.py"]

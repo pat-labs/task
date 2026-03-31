@@ -6,7 +6,7 @@ repos:
     hooks:
       - id: check-added-large-files
       - id: check-merge-conflict
-      - id: debug-statements
+      - id: debug-statusments
       - id: detect-private-key
       - id: end-of-file-fixer
       # - id: no-commit-to-branch
@@ -85,5 +85,5 @@ repos:
     rev: v2.1.1
     hooks:
       - id: conventional-pre-commit
-        stages: [commit-msg]
-        args: ["feat", "fix", "refactor", "performance", "style", "test", "docs", "build", "actions"]
+        stages: [ commit-msg ]
+        args: [ "feat", "fix", "refactor", "performance", "style", "test", "docs", "build", "actions" ]
