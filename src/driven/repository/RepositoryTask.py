@@ -1,12 +1,11 @@
 from typing import List, Optional, Protocol
 
 from src.domain.dto.DtoFetchHeadersTasks import DtoFetchHeadersTasks
-from src.domain.error.ExceptionKeyTask import ExceptionKeyTask
 from src.domain.model.ModelTask import ModelTask
 
 
 class RepositoryTask(Protocol):
-    def validate(self, task: ModelTask) -> List[str]:
+    def entity_exists(self, task_id: str) -> bool:
         pass
 
     def create(self, task: ModelTask):

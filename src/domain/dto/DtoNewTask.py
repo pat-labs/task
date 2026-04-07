@@ -1,9 +1,9 @@
-from typing import NamedTuple, List
+from typing import List, NamedTuple
 
 
 class DtoNewTask(NamedTuple):
     task_id: str
-    tittle: str
+    title: str
     task_tags: List[str]
     status: str
     user_assigned_id: str

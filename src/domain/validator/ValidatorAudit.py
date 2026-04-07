@@ -2,9 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from src.domain.constants.Constants import Constants
-from src.domain.enum.ExceptionKey import ExceptionKeyAudit
 from src.domain.model.ModelAudit import ModelAudit
-from src.driven.repository.RepositoryAudit import RepositoryAudit
 
 
 def is_not_valid_user(user_id: str) -> bool:

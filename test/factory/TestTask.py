@@ -114,7 +114,7 @@ class TestTask(unittest.TestCase):
         self.assertEqual(dao_task.milestones, self.task_data.milestones)
 
     def test_fetch_tasks(self):
-        tasks = self.application_task.fetch_headers_tasks()
+        tasks = self.application_task.fetch_headers()
         self.assertEqual(len(tasks), 1)
 
 

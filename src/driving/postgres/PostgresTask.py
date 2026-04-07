@@ -40,10 +40,10 @@ class PostgresTask:
             cursor.execute(f"""
                 CREATE TABLE IF NOT EXISTS task (
                     task_id VARCHAR({ConstantsTask.TASK_ID_MAX_SIZE}) PRIMARY KEY,
-                    tittle VARCHAR({ConstantsTask.TASK_TITTLE_MAX_SIZE}),
+                    title VARCHAR({ConstantsTask.TASK_TITLE_MAX_SIZE}),
                     detail VARCHAR({ConstantsTask.TASK_DESCRIPTION_MAX_SIZE}),
                     status VARCHAR({ConstantsTask.TASK_STATUS_MAX_SIZE}),
-                    task_ids VARCHAR({ConstantsTask.TASK_ID_MAX_SIZE}),
+                    linked_items VARCHAR({ConstantsTask.TASK_ID_MAX_SIZE}),
                     task_tags TEXT[],
                     user_assigned_id VARCHAR({Constants.USER_ID_MAX_SIZE}),
                     {AuditUtil.get_sql_query()}
@@ -54,7 +54,7 @@ class PostgresTask:
                 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_task AS
                 SELECT
                     task_id,
-                    tittle,
+                    title,
                     task_tags,
                     status,
                     user_assigned_id
@@ -63,19 +63,19 @@ class PostgresTask:
                 """)
 
             cursor.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_task_task_id
-                    ON mv_task (task_id);
-                """)
+                           CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_task_task_id
+                               ON mv_task (task_id);
+                           """)
 
     def create(self, model_task: ModelTask) -> None:
         with self._db.get_cursor() as cursor:
             cursor.execute(
                 """
                 INSERT INTO task (task_id,
-                                  tittle,
+                                  title,
                                   detail,
                                   status,
-                                  task_ids,
+                                  linked_items,
                                   task_tags,
                                   user_assigned_id,
                                   user_audit_id)
@@ -83,10 +83,10 @@ class PostgresTask:
                 """,
                 (
                     model_task.task_id,
-                    model_task.tittle,
+                    model_task.title,
                     model_task.detail,
                     model_task.status,
-                    model_task.task_ids,
+                    model_task.linked_items,
                     model_task.task_tags,
                     model_task.user_assigned_id,
                     model_task.user_audit,
@@ -100,19 +100,19 @@ class PostgresTask:
     def fetch_headers_tasks(self) -> List[DtoFetchHeadersTasks]:
         with self._db.get_cursor() as cursor:
             cursor.execute("""
-                SELECT task_id,
-                       tittle,
-                       task_tags,
-                       status,
-                       user_assigned_id
-                FROM mv_task
-                """)
+                           SELECT task_id,
+                                  title,
+                                  task_tags,
+                                  status,
+                                  user_assigned_id
+                           FROM mv_task
+                           """)
             rows = cursor.fetchall()
 
         tasks = [
             DtoFetchHeadersTasks(
                 task_id=row[0],
-                tittle=row[1],
+                title=row[1],
                 task_tags=row[2],
                 status=row[3],
                 user_assigned_id=row[4],
