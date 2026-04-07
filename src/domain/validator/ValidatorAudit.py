@@ -2,7 +2,9 @@ from datetime import datetime
 from typing import List, Optional
 
 from src.domain.constants.Constants import Constants
+from src.domain.error.BuilderErrorMessage import BuilderErrorMessage
 from src.domain.model.ModelAudit import ModelAudit
+from src.domain.model.ModelError import ModelError
 
 
 def is_not_valid_user(user_id: str) -> bool:
@@ -14,7 +16,7 @@ def is_not_valid_user(user_id: str) -> bool:
 def is_not_valid_datetime_format(date: str):
     try:
         if date != datetime.strptime(date, Constants.DATE_TIME_FORMAT).strftime(
-            Constants.DATE_TIME_FORMAT
+                Constants.DATE_TIME_FORMAT
         ):
             raise ValueError
         return False
@@ -22,18 +24,21 @@ def is_not_valid_datetime_format(date: str):
         return True
 
 
-from typing import List, Optional
-
-
 class ValidatorAudit:
 
-    def __init__(
-        self,
-        audit_repository: RepositoryAudit,
-        error_builder: BuilderErrorMessage,
-    ):
-        self.audit_repository = audit_repository
+    def __init__(self, error_builder: BuilderErrorMessage):
         self.builder_error = error_builder
+
+    # ---------------------------------
+    # Create new audit (required fields)
+    # ---------------------------------
+    def validate_new(self, audit: ModelAudit) -> List[ModelError]:
+        errors: List[ModelError] = []
+
+        if not audit.user_wrote_id:
+            errors.append(self.builder_error.required("user_wrote_id"))
+
+        return errors
 
     # ---------------------------------
     # Full validation
@@ -54,8 +59,8 @@ class ValidatorAudit:
     # ---------------------------------
 
     def validate_user_wrote_id(
-        self,
-        user_wrote_id: str,
+            self,
+            user_wrote_id: str,
     ) -> Optional[ModelError]:
 
         if not user_wrote_id:
@@ -70,8 +75,8 @@ class ValidatorAudit:
         return None
 
     def validate_user_created_id(
-        self,
-        user_created_id: str,
+            self,
+            user_created_id: str,
     ) -> Optional[ModelError]:
 
         if not user_created_id:
@@ -86,8 +91,8 @@ class ValidatorAudit:
         return None
 
     def validate_updated_at(
-        self,
-        updated_at: str,
+            self,
+            updated_at: str,
     ) -> Optional[ModelError]:
 
         if not updated_at:
@@ -102,8 +107,8 @@ class ValidatorAudit:
         return None
 
     def validate_created_at(
-        self,
-        created_at: str,
+            self,
+            created_at: str,
     ) -> Optional[ModelError]:
 
         if not created_at:

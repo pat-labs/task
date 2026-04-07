@@ -1,14 +1,13 @@
 from enum import Enum
-from typing import List, Optional, Dict, Type
+from typing import Dict, List, Optional, Type
 
 from src.domain.constants.ConstantsTask import ConstantsTask
 from src.domain.enum.TaskLinkedKey import TaskLinkedKey
 from src.domain.enum.TaskStatus import TaskStatus
 from src.domain.enum.TaskTags import TaskTags
-from src.domain.error.Error import Error
-from src.domain.error.ErrorKey import ErrorKey
-from src.domain.model.ModelTask import ModelTask
-from src.driven.repository.RepositoryTask import RepositoryTask
+from src.domain.error.BuilderErrorMessage import BuilderErrorMessage
+from src.domain.model.ModelError import ModelError
+from src.domain.model.task.ModelTask import ModelTask
 
 
 def is_not_set(data: List) -> bool:
@@ -19,6 +18,7 @@ def is_not_set(data: List) -> bool:
 
 def has_name(enum_class: Type[Enum], name: str) -> bool:
     return name in enum_class.__members__
+
 
 class ValidatorTask:
 
@@ -98,8 +98,8 @@ class ValidatorTask:
         return None
 
     def validate_linked_items(
-        self,
-        linked_items: Dict[str, str],
+            self,
+            linked_items: Dict[str, str],
     ) -> Optional[ModelError]:
 
         for linked in linked_items.keys():
@@ -112,8 +112,8 @@ class ValidatorTask:
         return None
 
     def validate_task_tags(
-        self,
-        task_tags: List[str],
+            self,
+            task_tags: List[str],
     ) -> Optional[ModelError]:
 
         if is_not_set(task_tags):

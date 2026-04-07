@@ -1,4 +1,5 @@
 from functools import wraps
+
 import click
 
 from src.domain.error.ExceptionDomain import ExceptionDomain

@@ -1,17 +1,32 @@
-from enum import Enum
-from typing import List, Union, Any
+from typing import Any, List, Union, Optional
+
+from src.domain.model.ModelError import ModelError
 
 
 class ExceptionDriven(Exception):
-    def __init__(self, error_keys: Union[Enum, List[Enum]], details: str, trace: Any = None):
-        super().__init__(details)
+    """Base exception for domain-related errors."""
 
-        if isinstance(error_keys, Enum):
-            error_keys = [error_keys]
+    def __init__(
+            self,
+            errors: List[ModelError],
+    ):
+        self.errors = errors or []
+        super().__init__(self._build_message())
 
-        self.keys = [e.name for e in error_keys]
-        self.details = details
-        self.trace = trace
+    # -------------------------
+    # Private helpers
+    # -------------------------
+    def _build_message(self) -> str:
+        if not self.errors:
+            return "Domain exception occurred with no error details."
 
+        return "\n".join(
+            f"{error.key.value}: {error.message}"
+            for error in self.errors
+        )
+
+    # -------------------------
+    # String representation
+    # -------------------------
     def __str__(self) -> str:
-        return f"[{', '.join(self.keys)}] {self.details}"
+        return self._build_message()

@@ -1,0 +1,13 @@
+#<rule_id>:
+#  description: string
+#  message: string
+#  severity: error | warn | info
+#  scope: file | folder
+#  given: param
+#  then:
+#    function: prompt | pattern | defined | truthy | cli
+#    function_options:
+#      ...
+#  bad_example: (reference only)
+#  correct_example: (reference only)
+rule:

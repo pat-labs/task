@@ -4,12 +4,10 @@ import os
 import click
 
 from src.domain.dto.DtoFetchHeadersTasks import DtoFetchHeadersTasks
-from src.domain.mapper.MapperTask import MapperTask
-from src.driven.application.ApplicationTask import ApplicationTask
 from src.domain.error.WrapException import wrap_exception
+from src.domain.mapper.MapperTask import MapperTask
+from src.driven.application.task.ApplicationTask import ApplicationTask
 from src.driving.config.Bootstrap import Bootstrap
-from src.driving.fyle_system.FileSystemTask import FileSystemTask
-from src.driving.fyle_system.MyFileSystem import MyFileSystem
 
 ASSET_DIR = "db"
 TEMPLATE_DIR = "tmp"
@@ -21,10 +19,7 @@ ASSET_TEMPLATE_PATH = os.path.join(ASSET_DIR, TEMPLATE_DIR)
 class CliTask:
     def __init__(self):
         bootstrap = Bootstrap.load_bootstrap()
-        db_path = os.path.join(bootstrap.project_dir, "db")
-        repository = MyFileSystem(db_path)
-        repository_task = FileSystemTask(repository)
-        self.app_task_service = ApplicationTask(repository_task)
+        self.app_task_service = ApplicationTask(bootstrap)
         os.makedirs(ASSET_TEMPLATE_PATH, exist_ok=True)
 
     @wrap_exception

@@ -1,7 +1,7 @@
 from typing import List, Optional, Protocol
 
 from src.domain.dto.DtoFetchHeadersTasks import DtoFetchHeadersTasks
-from src.domain.model.ModelTask import ModelTask
+from src.domain.model.task.ModelTask import ModelTask
 
 
 class RepositoryTask(Protocol):

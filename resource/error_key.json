@@ -1,4 +1,4 @@
 {
-    "required": "New required message {attr}",
-    "invalid_format": "New invalid format message {pattern}"
+  "REQUIRED": "New required message {attr}",
+  "INVALID_FORMAT": "New invalid format message {pattern}"
 }

@@ -2,9 +2,9 @@ import os
 from typing import List, Optional
 
 from src.domain.dto.DtoFetchHeadersTasks import DtoFetchHeadersTasks
-from src.domain.error.ErrorKeyRepository import ErrorKeyRepository
+from src.domain.enum.ErrorKeyRepository import ErrorKeyRepository
 from src.domain.error.ExceptionDriven import ExceptionDriven
-from src.domain.model.ModelTask import ModelTask
+from src.domain.model.task.ModelTask import ModelTask
 from src.driving.fyle_system.MyFileSystem import MyFileSystem
 
 
@@ -27,7 +27,7 @@ class FileSystemTask:
 
     def create(self, task: ModelTask):
         if self.entity_exists(task.task_id):
-            raise ExceptionDriven(ErrorKeyRepository.REPOSITORY_DUPLICATE_KEY)
+            raise ExceptionDriven(ErrorKeyRepository.DUPLICATE_KEY)
         tasks = self._read_all()
         tasks.append(task)
         self._write_all(tasks)
@@ -47,7 +47,7 @@ class FileSystemTask:
 
     def update(self, task: ModelTask):
         if not self.entity_exists(task.task_id):
-            raise ExceptionDriven(ErrorKeyRepository.REPOSITORY_ENTITY_NOT_EXISTS)
+            raise ExceptionDriven(ErrorKeyRepository.ENTITY_NOT_EXISTS)
 
         tasks = self._read_all()
         for i, t in enumerate(tasks):
@@ -65,7 +65,7 @@ class FileSystemTask:
 
     def delete(self, task_id: str):
         if not self.entity_exists(task_id):
-            raise ExceptionDriven(ErrorKeyRepository.REPOSITORY_ENTITY_NOT_EXISTS)
+            raise ExceptionDriven(ErrorKeyRepository.ENTITY_NOT_EXISTS)
 
         tasks = self._read_all()
         tasks = [t for t in tasks if t.task_id != task_id]

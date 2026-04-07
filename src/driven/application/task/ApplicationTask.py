@@ -1,26 +1,24 @@
-import json
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from src.domain.dto.DtoFetchHeadersTasks import DtoFetchHeadersTasks
 from src.domain.error.ExceptionDomain import ExceptionDomain
 from src.domain.error.ExceptionDriven import ExceptionDriven
-from src.domain.model.ModelTask import ModelTask
+from src.domain.model.config.ModelBootstrap import ModelBootstrap
+from src.domain.model.task.ModelTask import ModelTask
 from src.domain.validator.ValidatorTask import ValidatorTask
-from src.driven.repository.RepositoryTask import RepositoryTask
 
 
 class ApplicationTask:
-    def __init__(self, bootstrap: ModelBootstrap, repository_task: RepositoryTask):
-        self.bootstrap = bootstrap
-        self.repository_task = repository_task
-        self.validator_task = ValidatorTask(self.repository_task)
+    def __init__(self, bootstrap: ModelBootstrap):
+        self.repository_task = bootstrap.repository_task
+        self.validator_task = ValidatorTask(bootstrap.error_key)
 
     @staticmethod
-    def get_template() -> ModelTask:
+    def get_template() -> Dict:
         return ModelTask.get_template()._asdict()
 
     def create(self, task: ModelTask):
-        error_domain = self.validator_task.validate(task)
+        error_domain = self.validator_task.validate_new(task)
         if error_domain:
             raise ExceptionDomain(error_domain)
 

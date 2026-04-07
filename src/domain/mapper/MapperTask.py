@@ -5,7 +5,7 @@ from src.domain.constants.Constants import Constants
 from src.domain.enum.TaskStatus import TaskStatus
 from src.domain.identifier.Identifier import Identifier
 from src.domain.model.ModelAudit import ModelAudit
-from src.domain.model.ModelTask import ModelTask
+from src.domain.model.task.ModelTask import ModelTask
 
 
 class MapperTask:
@@ -23,7 +23,7 @@ class MapperTask:
             title=title,
             detail=[],
             status=TaskStatus.OPEN.name,
-            linked_items=[],
+            linked_items={},
             task_tags=[],
             user_assigned_id=user_wrote_id,
             user_audit=audit._asdict(),

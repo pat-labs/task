@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from src.domain.constants.Constants import Constants
-
 
 class Identifier:
     @staticmethod
