@@ -9,14 +9,14 @@ from src.driving.fyle_system.MyFileSystem import MyFileSystem
 
 
 class FileSystemTask:
-    folder_sufix = "task"
-    file_name = "task"
+    schema = "task"
+    table = "task"
 
     def __init__(self, my_file_system: MyFileSystem):
         path = os.path.join(
             my_file_system.path,
-            self.folder_sufix,
-            f"{self.file_name}{my_file_system.file_extension}",
+            self.schema,
+            f"{self.table}{my_file_system.file_extension}",
         )
         os.makedirs(os.path.dirname(path), exist_ok=True)
         self._fs = MyFileSystem(path)

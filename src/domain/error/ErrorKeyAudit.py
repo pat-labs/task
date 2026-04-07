@@ -1,8 +1,0 @@
-from enum import Enum, auto
-
-
-class ErrorKeyAudit(Enum):
-    AUDIT_CREATED_AT_INVALID_FORMAT = auto()
-    AUDIT_UPDATE_AT_INVALID_FORMAT = auto()
-    AUDIT_USER_CREATE_ID_INVALID_FORMAT = auto()
-    AUDIT_USER_WROTE_ID_INVALID_FORMAT = auto()

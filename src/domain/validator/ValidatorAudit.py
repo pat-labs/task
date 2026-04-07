@@ -22,47 +22,97 @@ def is_not_valid_datetime_format(date: str):
         return True
 
 
-class ValidatorAudit:
-    def __init__(self, audit_repository: RepositoryAudit):
-        self.audit_repository = audit_repository
+from typing import List, Optional
 
-    def validate(self, audit: ModelAudit) -> List[ExceptionKeyAudit]:
-        error = [
+
+class ValidatorAudit:
+
+    def __init__(
+        self,
+        audit_repository: RepositoryAudit,
+        error_builder: BuilderErrorMessage,
+    ):
+        self.audit_repository = audit_repository
+        self.builder_error = error_builder
+
+    # ---------------------------------
+    # Full validation
+    # ---------------------------------
+    def validate(self, audit: ModelAudit) -> List[ModelError]:
+
+        errors = [
             self.validate_user_wrote_id(audit.user_wrote_id),
             self.validate_updated_at(audit.updated_at),
             self.validate_user_created_id(audit.user_created_id),
             self.validate_created_at(audit.created_at),
         ]
-        return [e for e in error if e is not None]
 
-    @staticmethod
-    def validate_user_wrote_id(user_wrote_id: str) -> Optional[ExceptionKeyAudit]:
-        return (
-            ExceptionKeyAudit.AUDIT_USER_WROTE_ID_INVALID_FORMAT
-            if is_not_valid_user(user_wrote_id)
-            else None
-        )
+        return [e for e in errors if e is not None]
 
-    @staticmethod
-    def validate_user_created_id(user_created_id: str) -> Optional[ExceptionKeyAudit]:
-        return (
-            ExceptionKeyAudit.AUDIT_USER_CREATE_ID_INVALID_FORMAT
-            if is_not_valid_user(user_created_id)
-            else None
-        )
+    # ---------------------------------
+    # Field validators
+    # ---------------------------------
 
-    @staticmethod
-    def validate_updated_at(updated_at: str) -> Optional[ExceptionKeyAudit]:
-        return (
-            ExceptionKeyAudit.AUDIT_UPDATE_AT_INVALID_FORMAT
-            if is_not_valid_datetime_format(updated_at)
-            else None
-        )
+    def validate_user_wrote_id(
+        self,
+        user_wrote_id: str,
+    ) -> Optional[ModelError]:
 
-    @staticmethod
-    def validate_created_at(created_at: str) -> Optional[ExceptionKeyAudit]:
-        return (
-            ExceptionKeyAudit.AUDIT_CREATED_AT_INVALID_FORMAT
-            if is_not_valid_datetime_format(created_at)
-            else None
-        )
+        if not user_wrote_id:
+            return self.builder_error.required("user_wrote_id")
+
+        if is_not_valid_user(user_wrote_id):
+            return self.builder_error.invalid_format(
+                "user_wrote_id",
+                "valid user id format",
+            )
+
+        return None
+
+    def validate_user_created_id(
+        self,
+        user_created_id: str,
+    ) -> Optional[ModelError]:
+
+        if not user_created_id:
+            return self.builder_error.required("user_created_id")
+
+        if is_not_valid_user(user_created_id):
+            return self.builder_error.invalid_format(
+                "user_created_id",
+                "valid user id format",
+            )
+
+        return None
+
+    def validate_updated_at(
+        self,
+        updated_at: str,
+    ) -> Optional[ModelError]:
+
+        if not updated_at:
+            return self.builder_error.required("updated_at")
+
+        if is_not_valid_datetime_format(updated_at):
+            return self.builder_error.invalid_format(
+                "updated_at",
+                "ISO datetime format",
+            )
+
+        return None
+
+    def validate_created_at(
+        self,
+        created_at: str,
+    ) -> Optional[ModelError]:
+
+        if not created_at:
+            return self.builder_error.required("created_at")
+
+        if is_not_valid_datetime_format(created_at):
+            return self.builder_error.invalid_format(
+                "created_at",
+                "ISO datetime format",
+            )
+
+        return None

@@ -11,8 +11,8 @@ from src.driving.config.Bootstrap import Bootstrap
 from src.driving.fyle_system.FileSystemTask import FileSystemTask
 from src.driving.fyle_system.MyFileSystem import MyFileSystem
 
-ASSET_DIR = "asset"
-TEMPLATE_DIR = "template"
+ASSET_DIR = "db"
+TEMPLATE_DIR = "tmp"
 TASK_NEW_FILE_NAME = "new_task.json"
 TASK_UPDATE_FILE_NAME = "update_task.json"
 ASSET_TEMPLATE_PATH = os.path.join(ASSET_DIR, TEMPLATE_DIR)

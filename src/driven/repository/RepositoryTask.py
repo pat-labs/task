@@ -5,6 +5,9 @@ from src.domain.model.ModelTask import ModelTask
 
 
 class RepositoryTask(Protocol):
+    schema: str
+    table: str
+
     def entity_exists(self, task_id: str) -> bool:
         pass
 

@@ -1,13 +1,13 @@
 import os
 
-from src.domain.model.ModelEnv import ModelEnv
+from src.domain.model.config.ModelEnv import ModelEnv
 
 
-class Env:
+class BuilderEnv:
     @staticmethod
     def load_env() -> ModelEnv:
         return ModelEnv(
-            api_base_version=os.getenv("API_BASE_VERSION", "1.0.0.0"),
+            api_base_version=os.getenv("API_BASE_VERSION", "1.0.0"),
             docker_name=os.getenv("DOCKER_NAME", "task"),
             docker_tag=os.getenv("DOCKER_TAG", "test"),
             allowed_extensions=os.getenv("ALLOWED_EXTENSIONS", "pdf,jpg,png").split(

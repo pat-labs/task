@@ -10,7 +10,8 @@ from src.driven.repository.RepositoryTask import RepositoryTask
 
 
 class ApplicationTask:
-    def __init__(self, repository_task: RepositoryTask):
+    def __init__(self, bootstrap: ModelBootstrap, repository_task: RepositoryTask):
+        self.bootstrap = bootstrap
         self.repository_task = repository_task
         self.validator_task = ValidatorTask(self.repository_task)
 
