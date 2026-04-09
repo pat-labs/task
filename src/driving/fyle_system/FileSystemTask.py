@@ -1,10 +1,10 @@
 import os
 from typing import List, Optional
 
-from src.domain.dto.DtoFetchHeadersTasks import DtoFetchHeadersTasks
-from src.domain.enum.ErrorKeyRepository import ErrorKeyRepository
-from src.domain.error.ExceptionDriven import ExceptionDriven
-from src.domain.model.task.ModelTask import ModelTask
+from src.domain.config.Error import Error
+from src.domain.model.Audit import Audit
+from src.domain.model.task.Task import Task
+from src.domain.model.task.TaskHeader import TaskHeader
 from src.driving.fyle_system.MyFileSystem import MyFileSystem
 
 
@@ -18,24 +18,23 @@ class FileSystemTask:
             self.schema,
             f"{self.table}{my_file_system.file_extension}",
         )
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        self._fs = MyFileSystem(path)
+        self._fs = my_file_system.set_path(path)
 
     def entity_exists(self, task_id: str) -> bool:
-        tasks = self._read_all()
-        return any(t.task_id == task_id for t in tasks)
+        return self.fetch_by_id(task_id) is not None
 
-    def create(self, task: ModelTask):
-        if self.entity_exists(task.task_id):
-            raise ExceptionDriven(ErrorKeyRepository.DUPLICATE_KEY)
+    def create(self, task: Task) -> Optional[Error]:
         tasks = self._read_all()
+        if any(t.task_id == task.task_id for t in tasks):
+            return self._fs.error_builder.duplicate_key("task_id", task.task_id)
         tasks.append(task)
         self._write_all(tasks)
+        return None
 
-    def fetch_headers_tasks(self) -> List[DtoFetchHeadersTasks]:
+    def fetch_headers_tasks(self) -> List[TaskHeader]:
         tasks = self._read_all()
         return [
-            DtoFetchHeadersTasks(
+            TaskHeader(
                 task_id=t.task_id,
                 title=t.title,
                 task_tags=t.task_tags,
@@ -45,40 +44,50 @@ class FileSystemTask:
             for t in tasks
         ]
 
-    def update(self, task: ModelTask):
-        if not self.entity_exists(task.task_id):
-            raise ExceptionDriven(ErrorKeyRepository.ENTITY_NOT_EXISTS)
-
+    def update(self, task: Task) -> Optional[Error]:
         tasks = self._read_all()
+        found = False
         for i, t in enumerate(tasks):
             if t.task_id == task.task_id:
                 tasks[i] = task
+                found = True
                 break
-        self._write_all(tasks)
 
-    def fetch_by_id(self, task_id: str) -> Optional[ModelTask]:
-        tasks = self._read_all()
-        for t in tasks:
-            if t.task_id == task_id:
-                return t
+        if not found:
+            return self._fs.error_builder.entity_not_exists("task_id", task.task_id)
+
+        self._write_all(tasks)
         return None
 
-    def delete(self, task_id: str):
-        if not self.entity_exists(task_id):
-            raise ExceptionDriven(ErrorKeyRepository.ENTITY_NOT_EXISTS)
+    def fetch_by_id(self, task_id: str) -> Optional[Task]:
+        return next((t for t in self._read_all() if t.task_id == task_id), None)
 
+    def delete(self, task_id: str) -> Optional[Error]:
         tasks = self._read_all()
+        initial_count = len(tasks)
         tasks = [t for t in tasks if t.task_id != task_id]
-        self._write_all(tasks)
 
-    def fetch(self) -> List[ModelTask]:
+        if len(tasks) == initial_count:
+            return self._fs.error_builder.entity_not_exists("task_id", task_id)
+
+        self._write_all(tasks)
+        return None
+
+    def fetch(self) -> List[Task]:
         return self._read_all()
 
-    def _read_all(self) -> List[ModelTask]:
+    def _read_all(self) -> List[Task]:
         data = self._fs.read()
         if not isinstance(data, list):
             return []
-        return [ModelTask(**t) for t in data]
 
-    def _write_all(self, tasks: List[ModelTask]):
-        self._fs.write([t._asdict() for t in tasks])
+        tasks = []
+        for t in data:
+            # Reconstruct the nested Audit object
+            if "user_audit" in t and isinstance(t["user_audit"], dict):
+                t["user_audit"] = Audit(**t["user_audit"])
+            tasks.append(Task(**t))
+        return tasks
+
+    def _write_all(self, tasks: List[Task]):
+        self._fs.write([t.as_dict() for t in tasks])

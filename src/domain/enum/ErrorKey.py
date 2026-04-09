@@ -2,7 +2,10 @@ from enum import Enum
 
 
 class ErrorKey(str, Enum):
+    NOT_IN_ENUM = "NOT_IN_ENUM"
+    NOT_UNIQUE_VALUES = "NOT_UNIQUE_VALUES"
     REQUIRED = "REQUIRED"
     INVALID_FORMAT = "INVALID_FORMAT"
     INVALID_VALUE = "INVALID_VALUE"
     MAX_SIZE = "MAX_SIZE"
+    CAST_FAIL = "CAST_FAIL"

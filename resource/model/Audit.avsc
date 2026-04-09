@@ -1,0 +1,23 @@
+{
+  "type": "record",
+  "name": "Audit",
+  "namespace": "src.domain.model",
+  "fields": [
+    {
+      "name": "user_wrote_id",
+      "type": "string"
+    },
+    {
+      "name": "updated_at",
+      "type": "string"
+    },
+    {
+      "name": "user_created_id",
+      "type": "string"
+    },
+    {
+      "name": "created_at",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "type": "record",
+  "name": "TaskHeader",
+  "namespace": "src.domain.model.task",
+  "fields": [
+    {
+      "name": "task_id",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "task_tags",
+      "type": {
+        "type": "array",
+        "items": "string"
+      }
+    },
+    {
+      "name": "status",
+      "type": "string"
+    },
+    {
+      "name": "user_assigned_id",
+      "type": "string"
+    }
+  ]
+}

@@ -1,4 +1,10 @@
 {
+  "NOT_IN_ENUM": "The {attr} is not present in {values}",
+  "NOT_UNIQUE_VALUES": "The {attr} values must be unique",
   "REQUIRED": "New required message {attr}",
-  "INVALID_FORMAT": "New invalid format message {pattern}"
+  "INVALID_FORMAT": "New invalid format message {pattern}",
+  "INVALID_VALUE": "New invalid value message {value}",
+  "MAX_SIZE": "The current size must be: {max_size}",
+  "DUPLICATE_KEY": "The {identifier} exists",
+  "ENTITY_NOT_EXISTS": "The {identifier} is not present in repository"
 }

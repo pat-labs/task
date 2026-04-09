@@ -1,15 +1,18 @@
-from typing import Any, List, Union, Optional
+from typing import List
 
-from src.domain.model.ModelError import ModelError
+from src.domain.config.Error import Error
+from src.domain.enum.DrivingComponent import DrivingComponent
 
 
 class ExceptionDriven(Exception):
     """Base exception for domain-related errors."""
 
     def __init__(
-            self,
-            errors: List[ModelError],
+        self,
+        component: DrivingComponent,
+        errors: List[Error],
     ):
+        self.component = component
         self.errors = errors or []
         super().__init__(self._build_message())
 
@@ -20,9 +23,10 @@ class ExceptionDriven(Exception):
         if not self.errors:
             return "Domain exception occurred with no error details."
 
-        return "\n".join(
-            f"{error.key.value}: {error.message}"
-            for error in self.errors
+        return (
+            self.component.value
+            + ":\n"
+            + "\n".join(f"{error.key.value}: {error.message}" for error in self.errors)
         )
 
     # -------------------------

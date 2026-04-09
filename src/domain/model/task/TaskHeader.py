@@ -1,7 +1,7 @@
 from typing import List, NamedTuple
 
 
-class DtoFetchHeadersTasks(NamedTuple):
+class TaskHeader(NamedTuple):
     task_id: str
     title: str
     task_tags: List[str]

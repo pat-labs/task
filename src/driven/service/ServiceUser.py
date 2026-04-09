@@ -1,6 +1,10 @@
 from typing import Protocol
 
+from src.domain.enum.DrivingComponent import DrivingComponent
+
 
 class ServiceUser(Protocol):
-    def is_not_valid_user(self, user_id: str) -> bool:
+    driving_component: DrivingComponent
+
+    def user_exists(self, user_id: str) -> bool:
         pass

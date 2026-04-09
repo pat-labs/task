@@ -5,12 +5,11 @@ __pycache__/
 # C extensions
 *.so
 #folders
-/src/media
-/src/log
 /src/.pytest_cache
 *.log
 
 .fake
-/asset/
 /db/
+/log/
 /.venv/
+/build/

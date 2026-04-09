@@ -1,0 +1,48 @@
+{
+  "type": "record",
+  "name": "Task",
+  "namespace": "src.domain.model.task",
+  "fields": [
+    {
+      "name": "task_id",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "detail",
+      "type": {
+        "type": "array",
+        "items": "string"
+      }
+    },
+    {
+      "name": "status",
+      "type": "string"
+    },
+    {
+      "name": "linked_items",
+      "type": {
+        "type": "map",
+        "values": "string"
+      }
+    },
+    {
+      "name": "task_tags",
+      "type": {
+        "type": "array",
+        "items": "string"
+      }
+    },
+    {
+      "name": "user_assigned_id",
+      "type": "string"
+    },
+    {
+      "name": "user_audit",
+      "type": "src.domain.model.Audit"
+    }
+  ]
+}
