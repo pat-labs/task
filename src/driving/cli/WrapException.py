@@ -10,8 +10,6 @@ from src.domain.error.ExceptionDriven import ExceptionDriven
 def wrap_exception(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(self, *args, **kwargs) -> Any:
-        # Attempt to retrieve the logger from the bootstrap attribute of the class instance
-        # This assumes the decorated method is an instance method and 'self' has a 'bootstrap' attribute
         logger = getattr(getattr(self, "bootstrap", None), "logger", None)
 
         try:

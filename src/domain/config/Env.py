@@ -8,6 +8,8 @@ class Env(NamedTuple):
     allowed_extensions: List[str]
     max_file_weight: int
     time_out: int
+    resource_dir: str
+    error_file_name: str
     log_level: str
     log_dir: str
     log_to_console: bool

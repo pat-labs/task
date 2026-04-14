@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import Dict, List, NamedTuple
 
-from src.domain.constants.Constants import Constants
 from src.domain.constants.ConstantsTask import ConstantsTask
 from src.domain.enum.TaskLinkedKey import TaskLinkedKey
 from src.domain.enum.TaskStatus import TaskStatus
 from src.domain.enum.TaskTags import TaskTags
 from src.domain.identifier.Identifier import Identifier
 from src.domain.model.Audit import Audit
+from src.domain.model.LinkedItem import LinkedItem
 
 
 class Task(NamedTuple):
@@ -16,7 +16,7 @@ class Task(NamedTuple):
     title: str
     detail: List[str]
     status: str
-    linked_items: Dict
+    linked_items: List[LinkedItem]
     task_tags: List[str]
     user_assigned_id: str
     user_audit: Audit
@@ -36,7 +36,7 @@ class Task(NamedTuple):
 
     @staticmethod
     def get_identifier() -> str:
-        return Identifier.get_datetime_identifier(Constants.DATE_TIME_FORMAT)
+        return Identifier.get_datetime_identifier(ConstantsTask.TASK_ID_DATE_FORMAT)
 
     @staticmethod
     def get_template(user_wrote_id: str) -> Task:
@@ -46,12 +46,12 @@ class Task(NamedTuple):
 
         return Task(
             task_id=task_id,
-            title="",
-            detail=[],
+            title="test",
+            detail=["As person", "I want to register a task", "For make a track"],
             status=status_default,
-            linked_items={},
+            linked_items=[],
             task_tags=[],
-            user_assigned_id="",
+            user_assigned_id=user_wrote_id,
             user_audit=audit,
         )
 

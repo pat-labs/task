@@ -1,5 +1,6 @@
-from enum import Enum, auto
+from enum import Enum
 
 
-class TaskLinkedKey(Enum):
-    TASK_RELATED = auto()
+class TaskLinkedKey(str, Enum):
+    TASK_PARENT = "TASK_PARENT"
+    TASK_RELATED = "TASK_RELATED"

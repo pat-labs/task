@@ -1,6 +1,6 @@
-from enum import Enum, auto
+from enum import Enum
 
 
-class TaskTags(Enum):
-    PROJECT = auto()
-    WORK = auto()
+class TaskTags(str, Enum):
+    PROJECT = "PROJECT"
+    WORK = "WORK"

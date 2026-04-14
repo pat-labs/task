@@ -15,6 +15,8 @@ class BuilderEnv:
             ),
             max_file_weight=int(os.getenv("MAX_FILE_WEIGHT", "16000")),
             time_out=int(os.getenv("TIME_OUT", "600")),
+            resource_dir=os.getenv("RESOURCE_DIR", "resource"),
+            error_file_name=os.getenv("ERROR_FILE_NAME", "builder_error.json"),
             log_level=os.getenv("LOG_LEVEL", "DEBUG"),
             log_dir=os.getenv("LOG_DIR", "log"),
             log_to_console=bool(os.getenv("LOG_TO_CONSOLE", "true")),

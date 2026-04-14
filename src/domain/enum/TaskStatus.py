@@ -1,6 +1,7 @@
-from enum import Enum, auto
+from enum import Enum
 
 
-class TaskStatus(Enum):
-    OPEN = auto()
-    IN_PROGRESS = auto()
+class TaskStatus(str, Enum):
+    OPEN = "OPEN"
+    IN_PROGRESS = "IN_PROGRESS"
+    CLOSED = "CLOSED"

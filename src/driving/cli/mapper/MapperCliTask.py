@@ -3,10 +3,10 @@ from typing import Dict
 
 from src.domain.enum.TaskStatus import TaskStatus
 from src.domain.model.Audit import Audit
-from src.domain.model.task.Task import Task
+from src.domain.model.Task import Task
 
 
-class MapperTask:
+class MapperCliTask:
     @staticmethod
     def args_to_model(title: str, user_wrote_id: str) -> Task:
         audit = Audit.create(
@@ -26,7 +26,7 @@ class MapperTask:
     @staticmethod
     def str_to_model(json_data: str) -> Task:
         data = json.loads(json_data)
-        return MapperTask.dict_to_model(data)
+        return MapperCliTask.dict_to_model(data)
 
     @staticmethod
     def dict_to_model(data: Dict) -> Task:

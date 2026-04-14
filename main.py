@@ -1,5 +1,5 @@
-from src.driving.cli.CliTask import make_task_cli
+from src.driving.cli.CliTask import CliTask
 
 if __name__ == "__main__":
-    command_group = make_task_cli()
+    command_group = CliTask.make_task_cli()
     command_group()

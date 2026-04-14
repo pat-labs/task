@@ -1,4 +1,4 @@
-from typing import NamedTuple, Optional
+from typing import List, NamedTuple
 
 
 class LogEntry(NamedTuple):
@@ -9,4 +9,4 @@ class LogEntry(NamedTuple):
     module: str
     func_name: str
     line_no: int
-    traceback: Optional[str] = None
+    traceback: List[str]

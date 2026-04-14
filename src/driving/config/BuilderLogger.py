@@ -11,19 +11,16 @@ class BuilderLogger:
         self._configured = False
 
     def build(self):
-        """Build and apply logging configuration."""
         handlers = {}
 
-        # Console handler
         if self._to_console:
             handlers["console"] = {
                 "class": "logging.StreamHandler",
                 "level": self._level,
-                "formatter": "json",
+                "formatter": "standard",
                 "stream": "ext://sys.stdout",
             }
 
-        # File handler
         if self._log_dir:
             handlers["file"] = {
                 "class": "src.driving.config.JsonArrayHandler.JsonDailyArrayHandler",
@@ -37,9 +34,13 @@ class BuilderLogger:
             "version": 1,
             "disable_existing_loggers": False,
             "formatters": {
+                "standard": {
+                    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                    "datefmt": "%Y-%m-%d %H:%M:%S",
+                },
                 "json": {
                     "()": "src.driving.config.JsonFormatter.JsonNamedTupleFormatter",
-                }
+                },
             },
             "handlers": handlers,
             "root": {

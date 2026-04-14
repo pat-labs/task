@@ -7,7 +7,6 @@ from src.domain.constants.Constants import Constants
 
 
 class JsonDailyArrayHandler(logging.Handler):
-    """Handler that manages logs in daily files named YYYYMMDD.json as JSON arrays."""
 
     def __init__(self, log_dir: str, encoding: str = "utf-8"):
         super().__init__()
@@ -23,16 +22,13 @@ class JsonDailyArrayHandler(logging.Handler):
         try:
             file_path = self._get_current_filepath()
 
-            # Initialize file as an empty array if it doesn't exist or is empty
             if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
                 with open(file_path, "w", encoding=self.encoding) as f:
                     f.write("[]")
 
-            # Get the formatted JSON string from the formatter
             msg = self.format(record)
             entry = json.loads(msg)
 
-            # Read current data, append, and overwrite
             with open(file_path, "r", encoding=self.encoding) as f:
                 data = json.load(f)
 

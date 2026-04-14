@@ -1,6 +1,6 @@
 from enum import Enum
 
 
-class DrivingComponent(Enum):
+class DrivingComponent(str, Enum):
     REPOSITORY = "REPOSITORY"
     SERVICE = "SERVICE"

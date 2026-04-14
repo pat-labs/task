@@ -1,36 +1,22 @@
-from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from src.domain.config.Error import Error
 from src.domain.constants.Constants import Constants
 from src.domain.error.BuilderErrorMessage import BuilderErrorMessage
+from src.domain.error.ExceptionDomain import ExceptionDomain
 from src.domain.model.Audit import Audit
-from src.driven.service.ServiceUser import ServiceUser
-
-
-def is_not_valid_format_user(user_id: str) -> bool:
-    return len(user_id) > Constants.USER_ID_MAX_SIZE
-
-
-def is_not_valid_datetime_format(date: str):
-    try:
-        return date != datetime.strptime(date, Constants.DATE_TIME_FORMAT).strftime(
-            Constants.DATE_TIME_FORMAT
-        )
-    except (ValueError, TypeError):
-        return True
+from src.domain.port.external_service.ServiceUser import ServiceUser
+from src.domain.validator.Util import Util
 
 
 class ValidatorAudit:
 
-    def __init__(self, error_builder: BuilderErrorMessage, service_user: ServiceUser):
-        self.builder_error = error_builder
+    def __init__(self, builder_error: BuilderErrorMessage, service_user: ServiceUser):
+        self.builder_error = builder_error
         self.service_user = service_user
 
-    # ---------------------------------
-    # Full validation
-    # ---------------------------------
-    def validate(self, audit: Audit) -> List[Error]:
+    def validate(self, audit: Audit):
+        errors = []
 
         if not audit.user_wrote_id:
             return [self.builder_error.required("user_wrote_id")]
@@ -38,21 +24,25 @@ class ValidatorAudit:
         if not audit.user_wrote_id:
             return [self.builder_error.required("updated_at")]
 
-        errors = [
+        field_errors = [
             self.validate_user_wrote_id(audit.user_wrote_id),
             self.validate_updated_at(audit.updated_at),
             self.validate_user_created_id(audit.user_created_id),
             self.validate_created_at(audit.created_at),
         ]
 
-        return [e for e in errors if e is not None]
+        errors.extend([e for e in field_errors if e is not None])
+
+        if errors:
+            raise ExceptionDomain(errors=errors)
+        return None
 
     # ---------------------------------
     # Field validators
     # ---------------------------------
 
     def _validate_user_id(self, field_name: str, user_id: str) -> Optional[Error]:
-        if is_not_valid_format_user(user_id):
+        if Util.is_not_valid_format_user(user_id):
             return self.builder_error.max_size(
                 field_name,
                 Constants.USER_ID_MAX_SIZE,
@@ -82,7 +72,7 @@ class ValidatorAudit:
         if not updated_at:
             return self.builder_error.required("updated_at")
 
-        if is_not_valid_datetime_format(updated_at):
+        if Util.is_not_valid_datetime_format(updated_at):
             return self.builder_error.invalid_format(
                 "updated_at",
                 "ISO datetime date_format",
@@ -98,7 +88,7 @@ class ValidatorAudit:
         if not created_at:
             return self.builder_error.required("created_at")
 
-        if is_not_valid_datetime_format(created_at):
+        if Util.is_not_valid_datetime_format(created_at):
             return self.builder_error.invalid_format(
                 "created_at",
                 "ISO datetime date_format",
