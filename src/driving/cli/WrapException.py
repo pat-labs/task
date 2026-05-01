@@ -10,7 +10,7 @@ from src.domain.error.ExceptionDriven import ExceptionDriven
 def wrap_exception(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(self, *args, **kwargs) -> Any:
-        logger = getattr(getattr(self, "bootstrap", None), "logger", None)
+        logger = getattr(getattr(self, "bootstrap", None), "console_log", None)
 
         try:
             return func(self, *args, **kwargs)

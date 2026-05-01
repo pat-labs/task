@@ -2,7 +2,7 @@ import json
 import logging
 from datetime import datetime
 
-from src.domain.model.LogEntry import LogEntry
+from src.domain.config.LogEntry import LogEntry
 
 
 class JsonNamedTupleFormatter(logging.Formatter):

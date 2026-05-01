@@ -2,67 +2,74 @@ from __future__ import annotations
 
 from typing import Dict, List, NamedTuple
 
-from src.domain.constants.ConstantsTask import ConstantsTask
-from src.domain.enum.TaskLinkedKey import TaskLinkedKey
-from src.domain.enum.TaskStatus import TaskStatus
-from src.domain.enum.TaskTags import TaskTags
-from src.domain.identifier.Identifier import Identifier
+from src.domain.error.BuilderError import BuilderError
+from src.domain.error.ExceptionDomain import ExceptionDomain
 from src.domain.model.Audit import Audit
 from src.domain.model.LinkedItem import LinkedItem
+from src.domain.model.StatusLog import StatusLog
 
 
 class Task(NamedTuple):
     task_id: str
     title: str
-    detail: List[str]
     status: str
-    linked_items: List[LinkedItem]
-    task_tags: List[str]
+    task_tags: List
     user_assigned_id: str
-    user_audit: Audit
-
-    def create(self, user_wrote_id: str):
-        audit = Audit.create(user_wrote_id)
-        return self._replace(user_audit=audit)
-
-    def update(self, user_wrote_id: str):
-        audit = Audit.update(self.user_audit, user_wrote_id)
-        return self._replace(user_audit=audit)
-
-    def as_dict(self) -> Dict:
-        task_dict = self._asdict()
-        task_dict["user_audit"] = self.user_audit.as_dict()
-        return task_dict
+    task_linked_items: List
+    user_audit: Dict
 
     @staticmethod
-    def get_identifier() -> str:
-        return Identifier.get_datetime_identifier(ConstantsTask.TASK_ID_DATE_FORMAT)
-
-    @staticmethod
-    def get_template(user_wrote_id: str) -> Task:
-        audit = Audit.get_template(user_wrote_id)
-        task_id = Task.get_identifier()
-        status_default = ConstantsTask.TASK_STATUS_DEFAULT_VALUE
-
+    def from_list(row: List):
+        if len(row) != 10:
+            raise ExceptionDomain(
+                "Task Error", [BuilderError.invalid_size("len_task", 10)]
+            )
         return Task(
-            task_id=task_id,
-            title="test",
-            detail=["As person", "I want to register a task", "For make a track"],
-            status=status_default,
-            linked_items=[],
-            task_tags=[],
-            user_assigned_id=user_wrote_id,
-            user_audit=audit,
+            task_id=row[0],
+            title=row[1],
+            status=row[2],
+            task_linked_items=row[3],
+            task_tags=row[4],
+            user_assigned_id=row[5],
+            user_audit=Audit(
+                user_wrote_id=row[6],
+                updated_at=row[7],
+                user_created_id=row[8],
+                created_at=row[9],
+            )._asdict(),
         )
 
     @staticmethod
-    def get_status() -> List[str]:
-        return TaskStatus._member_names_
+    def from_dict(task: Dict) -> Task:
+        try:
+            audit = Audit.from_dict(task["user_audit"])._asdict()
+            return Task(
+                task_id=task["task_id"],
+                title=task["title"],
+                status=task["status"],
+                task_linked_items=task["task_linked_items"],
+                task_tags=task["task_tags"],
+                user_assigned_id=task["user_assigned_id"],
+                user_audit=audit,
+            )
+        except KeyError as e:
+            raise ExceptionDomain(
+                "Task Error", [BuilderError.invalid_value("data", e.args[0])]
+            )
 
-    @staticmethod
-    def get_tags() -> List[str]:
-        return TaskTags._member_names_
+    def get_linked_items(self):
+        linked_items = []
+        for k, v in self.task_linked_items:
+            linked_items.append(
+                LinkedItem(task_id=self.task_id, linked_key=k, linked_value=v)
+            )
+        return linked_items
 
-    @staticmethod
-    def get_linked_key() -> List[str]:
-        return TaskLinkedKey._member_names_
+    def get_status_log(self):
+        audit = Audit.from_dict(self.user_audit)
+        return StatusLog(
+            task_id=self.task_id,
+            status=self.status,
+            user_wrote_id=audit.user_wrote_id,
+            wrote_at=audit.updated_at,
+        )

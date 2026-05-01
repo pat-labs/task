@@ -23,7 +23,7 @@
       "type": "string"
     },
     {
-      "name": "linked_items",
+      "name": "task_linked_items",
       "type": {
         "type": "map",
         "values": "string"

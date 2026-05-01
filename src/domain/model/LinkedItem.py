@@ -1,11 +1,23 @@
-from typing import NamedTuple
+from typing import Any, Dict, List, NamedTuple
 
-from src.domain.enum.LinkedMetadataKey import LinkedMetadataKey
-from src.domain.enum.TaskLinkedKey import TaskLinkedKey
+from src.domain.error.BuilderError import BuilderError
+from src.domain.error.ExceptionDomain import ExceptionDomain
 
 
 class LinkedItem(NamedTuple):
-    linked_key: TaskLinkedKey
-    url: str
-    metadata_type: LinkedMetadataKey
-    value: str
+    task_id: str
+    linked_key: str
+    linked_value: List
+
+    @staticmethod
+    def from_dict(row: Dict[str, Any]):
+        try:
+            return LinkedItem(
+                task_id=row["task_id"],
+                linked_key=row["linked_key"],
+                linked_value=row["linked_value"],
+            )
+        except KeyError as e:
+            raise ExceptionDomain(
+                "LinkedItem Error", [BuilderError.invalid_value("data", e.args[0])]
+            )

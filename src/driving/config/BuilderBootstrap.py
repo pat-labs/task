@@ -2,10 +2,11 @@ import os
 from pathlib import Path
 
 from src.domain.config.Bootstrap import Bootstrap
-from src.domain.error.BuilderErrorMessage import BuilderErrorMessage
-from src.driven.external_service.web_client.WebClientUser import WebClientUser
-from src.driven.repository.file_system.FileSystemTask import FileSystemTask
-from src.driven.repository.file_system.MyFileSystem import MyFileSystem
+from src.driven.external_service.MockServiceUser import MockServiceUser
+from src.driven.repository.Identifier.BuilderIdentifier import BuildIdentifier
+from src.driven.repository.file_system.MyFileSystemCsv import MyFileSystemCsv
+from src.driven.repository.postgres.MyPostgres import (MyPostgres,
+                                                       PostgresConfig)
 from src.driving.config.BuilderEnv import BuilderEnv
 from src.driving.config.BuilderLogger import BuilderLogger
 
@@ -18,27 +19,36 @@ class BuilderBootstrap:
 
         env = BuilderEnv.load_env()
 
-        logger = (
-            BuilderLogger(env.log_level, env.log_dir, env.log_to_console)
-            .build()
-            .get_logger("external_service")
+        logger_builder = BuilderLogger(
+            console_log_level="INFO", json_log_level="DEBUG", json_log_dir="./logs"
+        ).build()
+        console_log = logger_builder.get_logger("console_logger")
+        event_log = logger_builder.get_logger("json_event_logger")
+
+        web_client_user = MockServiceUser()
+
+        my_postgres_config = PostgresConfig(
+            host=env.postgres_host,
+            user=env.postgres_user,
+            password=env.postgres_password,
+            database=env.postgres_db,
+            port=env.postgres_port,
+            minconn=env.postgres_min_connections,
+            maxconn=env.postgres_max_connections,
         )
+        #repository_postgres = MyPostgres(my_postgres_config, console_log, event_log)
+        repository_postgres = None
 
-        builder_error = BuilderErrorMessage(
-            os.path.join(project_dir, env.resource_dir, env.error_file_name)
-        )
-
-        web_client_user = WebClientUser()
-
-        db_path = os.path.join(project_dir, "db")
-        repository_file = MyFileSystem(db_path, builder_error)
-        repository_file_task = FileSystemTask(repository_file)
+        db_path = os.path.join(project_dir, env.filesystem_database_dir)
+        repository_file = MyFileSystemCsv(db_path, console_log, event_log)
 
         return Bootstrap(
             project_dir=project_dir,
             env=env,
-            logger=logger,
-            builder_error=builder_error,
+            console_log=console_log,
+            event_log=event_log,
+            identifier_generator=BuildIdentifier,
             service_user=web_client_user,
-            repository_task=repository_file_task,
+            repository_file=repository_file,
+            repository_postgres=repository_postgres,
         )

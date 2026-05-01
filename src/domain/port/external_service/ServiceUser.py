@@ -1,10 +1,8 @@
 from typing import Protocol
 
-from src.domain.enum.DrivingComponent import DrivingComponent
-
 
 class ServiceUser(Protocol):
-    driving_component: DrivingComponent
+    driving_component = "SERVICE_USER"
 
     def user_exists(self, user_id: str) -> bool:
         pass

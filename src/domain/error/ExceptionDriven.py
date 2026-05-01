@@ -1,29 +1,16 @@
 from typing import List
 
-from src.domain.config.Error import Error
-from src.domain.enum.DrivingComponent import DrivingComponent
-
 
 class ExceptionDriven(Exception):
 
     def __init__(
         self,
-        component: DrivingComponent,
-        errors: List[Error],
+        component: str,
+        errors: List,
     ):
         self.component = component
         self.errors = errors or []
-        super().__init__(self._build_message())
+        super().__init__(self.component)
 
-    def _build_message(self) -> str:
-        if not self.errors:
-            return "Domain exception occurred with no error details."
-
-        return (
-            self.component.value
-            + ":\n"
-            + "\n".join(f"{error.key.value}: {error.message}" for error in self.errors)
-        )
-
-    def __str__(self) -> str:
-        return self._build_message()
+    def __str__(self):
+        return self.component + "\n".join([str(e) for e in self.errors])

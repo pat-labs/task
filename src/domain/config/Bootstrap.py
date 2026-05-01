@@ -2,15 +2,18 @@ from logging import Logger
 from typing import NamedTuple
 
 from src.domain.config.Env import Env
-from src.domain.error.BuilderErrorMessage import BuilderErrorMessage
 from src.domain.port.external_service.ServiceUser import ServiceUser
-from src.domain.port.repository.RepositoryTask import RepositoryTask
+from src.domain.port.Identifier.IdentifierGenerator import IdentifierGenerator
+from src.driven.repository.file_system.MyFileSystemCsv import MyFileSystemCsv
+from src.driven.repository.postgres.MyPostgres import MyPostgres
 
 
 class Bootstrap(NamedTuple):
     project_dir: str
     env: Env
-    logger: Logger
-    builder_error: BuilderErrorMessage
+    console_log: Logger
+    event_log: Logger
+    identifier_generator: IdentifierGenerator
     service_user: ServiceUser
-    repository_task: RepositoryTask
+    repository_file: MyFileSystemCsv
+    repository_postgres: MyPostgres

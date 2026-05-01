@@ -11,5 +11,6 @@ __pycache__/
 .fake
 /db/
 /log/
+/tmp/
 /.venv/
 /build/
